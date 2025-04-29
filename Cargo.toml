@@ -5,7 +5,7 @@ version = "0.14.0"
 repository = "https://github.com/bonsairobo/smooth-bevy-cameras"
 authors = ["Duncan <bonsairobo@gmail.com>"]
 keywords = ["bevy", "camera"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 
 [dependencies]
