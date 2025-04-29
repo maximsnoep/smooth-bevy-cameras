@@ -14,11 +14,7 @@ fn main() {
 }
 
 /// set up a simple 3D scene
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
+fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
     // circular base
     commands.spawn((
         Mesh3d(meshes.add(Circle::new(4.0))),
@@ -39,13 +35,9 @@ fn setup(
         },
         Transform::from_xyz(4.0, 8.0, 4.0),
     ));
-
-    commands
-        .spawn(Camera3d::default())
-        .insert(OrbitCameraBundle::new(
-            OrbitCameraController::default(),
-            Vec3::new(-2.0, 5.0, 5.0),
-            Vec3::new(0., 0., 0.),
-            Vec3::Y,
-        ));
+    // camera
+    commands.spawn((
+        Camera3d::default(),
+        OrbitCameraBundle::new(OrbitCameraController::default(), Vec3::new(-2.0, 5.0, 5.0), Vec3::new(0., 0., 0.), Vec3::Y),
+    ));
 }

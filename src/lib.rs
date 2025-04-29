@@ -32,12 +32,13 @@
 //!     let eye = Vec3::default();
 //!     let target = Vec3::default();
 //!
-//!     commands
-//!         .spawn(LookTransformBundle {
+//!     commands.spawn((
+//!         Camera3d::default(),
+//!         LookTransformBundle {
 //!             transform: LookTransform::new(eye, target, Vec3::Y),
 //!             smoother: Smoother::new(0.9), // Value between 0.0 and 1.0, higher is smoother.
-//!         })
-//!         .insert(Camera3dBundle::default());
+//!         }
+//!     ));
 //!
 //! }
 //!

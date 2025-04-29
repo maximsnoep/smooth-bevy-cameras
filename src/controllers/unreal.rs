@@ -21,9 +21,7 @@ pub struct UnrealCameraPlugin {
 
 impl UnrealCameraPlugin {
     pub fn new(override_input_system: bool) -> Self {
-        Self {
-            override_input_system,
-        }
+        Self { override_input_system }
     }
 }
 
@@ -215,25 +213,19 @@ pub fn default_input_map(
     }
 
     if !left_pressed && !middle_pressed && right_pressed {
-        events.send(ControlEvent::Rotate(
-            mouse_rotate_sensitivity * cursor_delta,
-        ));
+        events.write(ControlEvent::Rotate(mouse_rotate_sensitivity * cursor_delta));
     }
 
     if panning.length_squared() > 0.0 {
-        events.send(ControlEvent::TranslateEye(panning));
+        events.write(ControlEvent::TranslateEye(panning));
     }
 
     if locomotion.length_squared() > 0.0 {
-        events.send(ControlEvent::Locomotion(locomotion));
+        events.write(ControlEvent::Locomotion(locomotion));
     }
 }
 
-pub fn control_system(
-    time: Res<Time>,
-    mut events: EventReader<ControlEvent>,
-    mut cameras: Query<(&UnrealCameraController, &mut LookTransform)>,
-) {
+pub fn control_system(time: Res<Time>, mut events: EventReader<ControlEvent>, mut cameras: Query<(&UnrealCameraController, &mut LookTransform)>) {
     // Can only control one camera at a time.
     let mut transform = if let Some((_, transform)) = cameras.iter_mut().find(|c| c.0.enabled) {
         transform

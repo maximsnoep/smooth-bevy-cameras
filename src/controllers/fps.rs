@@ -18,9 +18,7 @@ pub struct FpsCameraPlugin {
 
 impl FpsCameraPlugin {
     pub fn new(override_input_system: bool) -> Self {
-        Self {
-            override_input_system,
-        }
+        Self { override_input_system }
     }
 }
 
@@ -113,9 +111,7 @@ pub fn default_input_map(
         cursor_delta += event.delta;
     }
 
-    events.send(ControlEvent::Rotate(
-        mouse_rotate_sensitivity * cursor_delta,
-    ));
+    events.write(ControlEvent::Rotate(mouse_rotate_sensitivity * cursor_delta));
 
     for (key, dir) in [
         (KeyCode::KeyW, Vec3::Z),
@@ -129,16 +125,12 @@ pub fn default_input_map(
     .cloned()
     {
         if keyboard.pressed(key) {
-            events.send(ControlEvent::TranslateEye(translate_sensitivity * dir));
+            events.write(ControlEvent::TranslateEye(translate_sensitivity * dir));
         }
     }
 }
 
-pub fn control_system(
-    mut events: EventReader<ControlEvent>,
-    mut cameras: Query<(&FpsCameraController, &mut LookTransform)>,
-    time: Res<Time>,
-) {
+pub fn control_system(mut events: EventReader<ControlEvent>, mut cameras: Query<(&FpsCameraController, &mut LookTransform)>, time: Res<Time>) {
     // Can only control one camera at a time.
     let mut transform = if let Some((_, transform)) = cameras.iter_mut().find(|c| c.0.enabled) {
         transform

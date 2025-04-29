@@ -21,9 +21,7 @@ pub struct OrbitCameraPlugin {
 
 impl OrbitCameraPlugin {
     pub fn new(override_input_system: bool) -> Self {
-        Self {
-            override_input_system,
-        }
+        Self { override_input_system }
     }
 }
 
@@ -126,13 +124,11 @@ pub fn default_input_map(
     }
 
     if keyboard.pressed(KeyCode::ControlLeft) {
-        events.send(ControlEvent::Orbit(mouse_rotate_sensitivity * cursor_delta));
+        events.write(ControlEvent::Orbit(mouse_rotate_sensitivity * cursor_delta));
     }
 
     if mouse_buttons.pressed(MouseButton::Right) {
-        events.send(ControlEvent::TranslateTarget(
-            mouse_translate_sensitivity * cursor_delta,
-        ));
+        events.write(ControlEvent::TranslateTarget(mouse_translate_sensitivity * cursor_delta));
     }
 
     let mut scalar = 1.0;
@@ -144,21 +140,16 @@ pub fn default_input_map(
         };
         scalar *= 1.0 - scroll_amount * mouse_wheel_zoom_sensitivity;
     }
-    events.send(ControlEvent::Zoom(scalar));
+    events.write(ControlEvent::Zoom(scalar));
 }
 
-pub fn control_system(
-    time: Res<Time>,
-    mut events: EventReader<ControlEvent>,
-    mut cameras: Query<(&OrbitCameraController, &mut LookTransform, &Transform)>,
-) {
+pub fn control_system(time: Res<Time>, mut events: EventReader<ControlEvent>, mut cameras: Query<(&OrbitCameraController, &mut LookTransform, &Transform)>) {
     // Can only control one camera at a time.
-    let (mut transform, scene_transform) =
-        if let Some((_, transform, scene_transform)) = cameras.iter_mut().find(|c| c.0.enabled) {
-            (transform, scene_transform)
-        } else {
-            return;
-        };
+    let (mut transform, scene_transform) = if let Some((_, transform, scene_transform)) = cameras.iter_mut().find(|c| c.0.enabled) {
+        (transform, scene_transform)
+    } else {
+        return;
+    };
 
     let mut look_angles = LookAngles::from_vector(-transform.look_direction().unwrap());
     let mut radius_scalar = 1.0;
